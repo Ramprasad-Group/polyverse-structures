@@ -38,14 +38,14 @@ def example_data():
     id_sm = [
         ("ZINC0", smiles_dict["adipic acid"]),
         ("ZINC1", smiles_dict["hexane diamine"]),
-        ("ZINC2", "C(C(N=C=O)CCN)CCN"),  # diamine that should fail
+        ("ZINC2", "C(C(N=C=O)CCN)CCN"),
         ("ZINC3", smiles_dict["3-Aminobenzoyl chloride"]),
         ("ZINC4", "C12C(CC(CC1CN)C2)C(=O)O"),  # monomer with norbornane
         ("ZINC5", smiles_dict["Bicyclo[2.2.1]heptane-2,5-dicarboxylic acid"]),
         (
             "ZINC6",
             canonical_smiles("O=C1C2C3C=CC(O3)C2C(=O)N1c1cc(C(F)(F)F)cc(C(F)(F)F)c1"),
-        ),  # template monomer for ROMP
+        ),
         ("ZINC7", smiles_dict["Cyclohexene"]),
         ("ZINC8", smiles_dict["Cyclopentadiene"]),
         ("ZINC9", smiles_dict["TFTPN"]),
@@ -91,22 +91,16 @@ def example_data():
         ),
         (
             "ZINC24",
-            canonical_smiles(
-                # This SMILES has a positive charge. It should fail all tests.
-                "CC4(C)CC2(C[C+](C)(C)(C)c1cc(O)c(O)cc12)c3cc(O)c(O)cc34"
-            ),
+            canonical_smiles("CC4(C)CC2(C[C+](C)(C)(C)c1cc(O)c(O)cc12)c3cc(O)c(O)cc34"),
         ),
         (
             "ZINC25",
-            # This SMILES should fail ADMET due to chance of backbiting.
             smiles_dict["allylethylene"],
         ),
         ("ZINC26", canonical_smiles("C=CCCC(C)CCC=C")),
         (
             "ZINC27",
-            canonical_smiles(
-                "C=CCCC(C)CC(O)C=C"  # should fail ADMET due to unbalanced partial charge
-            ),
+            canonical_smiles("C=CCCC(C)CC(O)C=C"),
         ),
         ("ZINC28", canonical_smiles("C#CCC#C")),
         ("ZINC29", canonical_smiles("[N-]=[N+]=NCOCOCN=[N+]=[N-]")),
