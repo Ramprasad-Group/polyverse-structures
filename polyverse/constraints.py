@@ -97,9 +97,48 @@ class Constraint:
             return return_bool
 
 
-class DefaultBackbiteConstraint(Constraint):
+class ChargeConstraint(Constraint):
+    def __init__(self, comparator, threshold, debug, substruct1, substruct2) -> None:
+        """
+        Charge constraint for comparing partial charges between two substructures.
+
+        Args:
+            comparator (str): Comparison operator (e.g., '==', '<', '>').
+            threshold (float): Threshold value for the comparison.
+            debug (bool): Debug mode flag.
+            substruct1 (list): Atom indices of the first substructure to test.
+            substruct2 (list): Atom indices of the second substructure to compare with substruct1.
+        """
+        super().__init__(comparator, threshold, debug)
+        self.substruct1 = substruct1
+        self.substruct2 = substruct2
+
+    def _compute_variable(self, mol):
+        """
+        Calculate the maximum absolute difference in partial charges between atoms
+        in substruct1 and substruct2.
+
+        Args:
+            mol (rdkit.Chem.Mol): RDKit molecule to calculate charges on.
+
+        Returns:
+            float: Maximum absolute charge difference.
+        """
+        mol.ComputeGasteigerCharges()
+        return np.max(
+            np.abs(
+                [
+                    mol.GetAtomWithIdx(x).GetDoubleProp("_GasteigerCharge")
+                    - mol.GetAtomWithIdx(y).GetDoubleProp("_GasteigerCharge")
+                    for (x, y) in zip(self.substruct1, self.substruct2)
+                ]
+            )
+        )
+
+
+class BackbiteConstraint(Constraint):
     """
-    Default constraint for backbiting.
+    Constraint for backbiting.
 
     Attributes:
         smartsA (str): SMARTS pattern for atom A.
@@ -108,15 +147,33 @@ class DefaultBackbiteConstraint(Constraint):
         atomB (rdkit.Chem.Mol): RDKit molecule for atom B.
     """
 
-    def __init__(self, debug=False):
+    def __init__(self, debug=False, min_dist=8):
+        """
+        Initialize the BackbiteConstraint.
+
+        Args:
+            debug (bool): Debug mode flag.
+            min_dist (int): Minimum distance between atoms A and B.
+        """
         comparator, threshold, smartsA, smartsB = "==", True, "[#0]", "[#0]"
         super().__init__(comparator, threshold, debug)
         self.smartsA = smartsA
         self.smartsB = smartsB
         self.atomA = Chem.MolFromSmarts(smartsA)
         self.atomB = Chem.MolFromSmarts(smartsB)
+        self.min_dist = min_dist
 
     def _compute_variable(self, mol):
+        """
+        Check if the shortest path distance between atoms A and B is greater than or
+        equal to the minimum required distance.
+
+        Args:
+            mol (rdkit.Chem.Mol): RDKit molecule to analyze.
+
+        Returns:
+            bool: True if the condition is met, False otherwise.
+        """
         self.indexA = mol.GetSubstructMatches(self.atomA)
         self.indexB = mol.GetSubstructMatches(self.atomB)
 
@@ -132,11 +189,7 @@ class DefaultBackbiteConstraint(Constraint):
         self.indexA, self.indexB = self.indexA[0], self.indexB[0]
         sp = Chem.GetShortestPath(mol, self.indexA, self.indexB)  # shortest path
         dist = len(sp)
-
-        if dist > 7:
-            return True
-        else:
-            return False
+        return dist >= self.min_dist
 
 
 class RingSizeConstraint(Constraint):
