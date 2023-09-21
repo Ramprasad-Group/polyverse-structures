@@ -5,6 +5,7 @@ from copy import deepcopy
 from polyverse.utils import canonical_smiles
 from polyverse import constants as ks
 from polyverse import polymerize
+from polyverse.constraints import BackbiteConstraint
 
 npartitions = 1
 
@@ -104,6 +105,21 @@ def example_data():
         ),
         ("ZINC28", canonical_smiles("C#CCC#C")),
         ("ZINC29", canonical_smiles("[N-]=[N+]=NCOCOCN=[N+]=[N-]")),
+        ("ZINC30", canonical_smiles("O=C1OC(=O)C2C(=O)OC(=O)C12")),  # dianhydride 1
+        ("ZINC31", canonical_smiles("O=C1OC(=O)C2(C(=O)OC(=O)C12C)C")),  # dianhydride 2
+        ("ZINC32", canonical_smiles("NCN")),  # short diamine
+        ("ZINC33", canonical_smiles("NCCCN")),  # long diamine 1
+        ("ZINC34", canonical_smiles("NCC(C)CN")),  # long diamine 2
+        ("ZINC35", canonical_smiles("NCC(N)CCN")),  # triamine
+        ("ZINC36", canonical_smiles("CN")),  # monoamine
+        (
+            "ZINC37",
+            canonical_smiles("CC(=O)OC(=O)CCCN"),
+        ),  # molecule with one amine group and one anhydride group
+        (
+            "ZINC38",
+            canonical_smiles("NCCC(N)F"),
+        ),  # long diamine with unequal charges on each amine
     ]
     index = list(range(len(id_sm)))
     df = pd.DataFrame(
@@ -131,5 +147,41 @@ def test_romp(example_data):
     molecules = example_data["df"].iloc[[6, 7, 8, 13, 14], :]
     romp = polymerize.ROMP(npartitions=npartitions)
     polymers = romp.generate_polymers(molecules)
+    # check that we get the polymers we expect
+    pd.testing.assert_frame_equal(polymers, correct_df)
+
+
+def test_polyimides(example_data):
+    correct_df = pd.DataFrame(
+        {
+            "zinc_ids": [
+                "ZINC30.ZINC33",
+                "ZINC30.ZINC34",
+                "ZINC31.ZINC33",
+                "ZINC31.ZINC34",
+            ],
+            "polymer": [
+                canonical_smiles("*CCCN2C(=O)C1C(=O)N(*)C(=O)C1C2=O"),
+                canonical_smiles("[*]CC(CN2C(=O)C1C(=O)N([*])C(=O)C1C2=O)C"),
+                canonical_smiles("[*]CCCN2C(=O)C1(C(=O)N([*])C(=O)C1(C2=O)C)C"),
+                canonical_smiles("[*]CC(CN2C(=O)C1(C(=O)N([*])C(=O)C1(C2=O)C)C)C"),
+            ],
+            "reactants": [
+                f"{canonical_smiles('O=C1OC(=O)C2C(=O)OC(=O)C12')}.{canonical_smiles('NCCCN')}",
+                f"{canonical_smiles('O=C1OC(=O)C2C(=O)OC(=O)C12')}.{canonical_smiles('NCC(C)CN')}",
+                f"{canonical_smiles('O=C1OC(=O)C2(C(=O)OC(=O)C12C)C')}.{canonical_smiles('NCCCN')}",
+                f"{canonical_smiles('O=C1OC(=O)C2(C(=O)OC(=O)C12C)C')}.{canonical_smiles('NCC(C)CN')}",
+            ],
+        }
+    )
+    molecules = example_data["df"].iloc[range(30, 39), :]
+    bb_constraint = BackbiteConstraint(
+        min_dist=9
+    )  # setting the distance to 9 for this test only.
+    pi = polymerize.Polyimide(npartitions=npartitions, bb_constraint=bb_constraint)
+    polymers = pi.generate_polymers(molecules)
+    polymers.index = list(
+        range(len(polymers))
+    )  # reset the index to match those in 'correct_df'
     # check that we get the polymers we expect
     pd.testing.assert_frame_equal(polymers, correct_df)
