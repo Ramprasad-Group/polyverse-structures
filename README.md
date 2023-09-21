@@ -8,8 +8,8 @@ This repo contains the code used to generate the polymers studied in the compani
 5. Run `poetry env use /path/to/python3.9/executable`.
 6. Run `poetry install`.
 ## Examples
-Examples of how to use the codebase are provided in the file named `tests/test_polyverse.py`. Basically, the user needs to first create a data frame of molecules. The data frame should have one column named "id-smiles". Entry entry in this column should be a `tuple`, with the first element being a unique identifier for the molecule (I use the ZINC ID) and the second element being the SMILES string for the molecule. Then, the user can input these molecules into an instance of the `ROMP` or `Polyimide` classes (defined in `polyverse/polymerize.py`) to generate polymers.
+Examples of how to use the codebase are provided in the file named `tests/test_polyverse.py`. Basically, the user needs to first create a data frame of molecules. The data frame should have one column named "id-smiles". Each entry in this column should be a `tuple`, with the first element being a unique identifier for the molecule (I use the ZINC ID) and the second element being the SMILES string for the molecule. Then, the user can input these molecules into an instance of the `ROMP` or `Polyimide` classes (defined in `polyverse/polymerize.py`) to generate polymers.
 ## Testing
-There are two tests in this repo. One is to test the `ROMP` class, the other to test the `Polyimide` class. To test the code, run `poetry run pytest`.
+There are two tests in this repo. One is to test the `ROMP` class, the other to test the `Polyimide` class. To execute the tests, run `poetry run pytest`.
 ## Data
 `romp_polymers.json` contains the ROMP polymers designed in the companion paper.
