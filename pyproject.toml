@@ -16,7 +16,7 @@ CairoSVG = "^2.7.1"
 openpyxl = "^3.1.2"
 selenium = "^4.12.0"
 more-itertools = "^10.1.0"
-polymer-smiles = {git = "ssh://git@github.com/rishigurnani/polymer_smiles.git"}
+rdkit-pypi = ">=2021.9.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.4.2"

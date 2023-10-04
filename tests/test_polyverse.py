@@ -133,7 +133,12 @@ def example_data():
 
 
 def test_romp(example_data):
-    correct_df = pd.DataFrame(
+    romp = polymerize.ROMP(npartitions=npartitions)
+    molecules = example_data["df"].iloc[[6, 7, 8, 13, 14], :]
+    polymers = romp.generate_polymers(molecules)
+    
+    # Check that we got the results we expect.
+    expected = pd.DataFrame(
         {
             "zinc_ids": ["ZINC6"],
             "polymer": ["*=CC1OC(C=*)C2C(=O)N(c3cc(C(F)(F)F)cc(C(F)(F)F)c3)C(=O)C12"],
@@ -144,15 +149,25 @@ def test_romp(example_data):
             ],
         }
     )
-    molecules = example_data["df"].iloc[[6, 7, 8, 13, 14], :]
-    romp = polymerize.ROMP(npartitions=npartitions)
-    polymers = romp.generate_polymers(molecules)
-    # check that we get the polymers we expect
-    pd.testing.assert_frame_equal(polymers, correct_df)
+    pd.testing.assert_frame_equal(polymers, expected)
 
 
 def test_polyimides(example_data):
-    correct_df = pd.DataFrame(
+    # Create an instance of the Polyimide class.
+    bb_constraint = BackbiteConstraint(
+        min_dist=9
+    )  # setting the distance to 9 for this test only.
+    pi = polymerize.Polyimide(npartitions=npartitions, bb_constraint=bb_constraint)
+    
+    # Extract molecules from `example_data` and generate polymers from them.
+    molecules = example_data["df"].iloc[range(30, 39), :]
+    polymers = pi.generate_polymers(molecules)
+    polymers.index = list(
+        range(len(polymers))
+    )  # reset the index for convenience.
+    
+    # Check that we got the expected results.
+    expected = pd.DataFrame(
         {
             "zinc_ids": [
                 "ZINC30.ZINC33",
@@ -174,14 +189,4 @@ def test_polyimides(example_data):
             ],
         }
     )
-    molecules = example_data["df"].iloc[range(30, 39), :]
-    bb_constraint = BackbiteConstraint(
-        min_dist=9
-    )  # setting the distance to 9 for this test only.
-    pi = polymerize.Polyimide(npartitions=npartitions, bb_constraint=bb_constraint)
-    polymers = pi.generate_polymers(molecules)
-    polymers.index = list(
-        range(len(polymers))
-    )  # reset the index to match those in 'correct_df'
-    # check that we get the polymers we expect
-    pd.testing.assert_frame_equal(polymers, correct_df)
+    pd.testing.assert_frame_equal(polymers, expected)
