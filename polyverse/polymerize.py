@@ -54,7 +54,8 @@ class Polymerize:
 
         self.reaction_class = reaction_class
 
-        # These are used to terminate (i.e., add star atoms to) the product of self.rxn_smarts.
+        # These are used to terminate (i.e., add star atoms to) the product of the
+        # reaction encoded by self.rxn_smarts.
         self.polymerization1_smarts = polymerization1_smarts
         self.polymerization2_smarts = polymerization2_smarts
 
@@ -266,31 +267,27 @@ class Polyimide(Polymerize):
         """
         _id1, mol1 = tuple(monomer_data[0][0])
         _id2, mol2 = tuple(monomer_data[0][1])
-        product = self.rxn.RunReactants((mol1, mol2))[0][0]
-        product = canonical_mol(product)
-
         reactants = f"{Chem.MolToSmiles(mol1)}.{Chem.MolToSmiles(mol2)}"
         _id = f"{_id1}.{_id2}"
 
+        intermediate = canonical_mol(self.rxn.RunReactants((mol1, mol2))[0][0])
         if self.P1:
-            V1 = canonical_mol(self.P1.RunReactants((product,))[0][0])
-        else:
-            V1 = product
+            intermediate = canonical_mol(self.P1.RunReactants((intermediate,))[0][0])
         if self.P2:
-            V2 = canonical_mol(self.P2.RunReactants((V1,))[0][0])
+            product = canonical_mol(self.P2.RunReactants((intermediate,))[0][0])
         else:
-            V2 = V1
+            product = intermediate
 
-        # If V2 is a valid molecule, let's return its SMILES string along
+        # If product is a valid molecule, let's return its SMILES string along
         # with other information
-        if V2:
+        if product:
             return {
                 "zinc_ids": _id,
-                "polymer": V2,
+                "polymer": product,
                 "reactants": reactants,
             }
 
-        # If V2 is not a valid molecule, then make its SMILES string None.
+        # If product is not a valid molecule, then make its SMILES string None.
         else:
             return {
                 "zinc_ids": _id,
@@ -490,26 +487,24 @@ class ROMP(Polymerize):
         """
 
         _id, mol = tuple(monomer_data)
-        product = self.rxn.RunReactants((mol,))[0][0]
         reactants = Chem.MolToSmiles(mol)
-        product = canonical_mol(product)
+
+        intermediate = canonical_mol(self.rxn.RunReactants((mol,))[0][0])
         if self.P1:
-            V1 = canonical_mol(self.P1.RunReactants((product,))[0][0])
-        else:
-            V1 = product
+            intermediate = canonical_mol(self.P1.RunReactants((intermediate,))[0][0])
         if self.P2:
-            V2 = canonical_mol(self.P2.RunReactants((V1,))[0][0])
+            product = canonical_mol(self.P2.RunReactants((intermediate,))[0][0])
         else:
-            V2 = V1
-        # If V2 is a valid molecule, let's return its SMILES string along
+            product = intermediate
+        # If product is a valid molecule, let's return its SMILES string along
         # with other information
-        if V2:
+        if product:
             return {
                 "zinc_ids": _id,
-                "polymer": Chem.MolToSmiles(V2),
+                "polymer": Chem.MolToSmiles(product),
                 "reactants": reactants,
             }
-        # If V2 is not a valid molecule, then make its SMILES string None.
+        # If product is not a valid molecule, then make its SMILES string None.
         else:
             return {
                 "zinc_ids": _id,
