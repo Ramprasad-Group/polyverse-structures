@@ -136,7 +136,7 @@ def test_romp(example_data):
     romp = polymerize.ROMP(npartitions=npartitions)
     molecules = example_data["df"].iloc[[6, 7, 8, 13, 14], :]
     polymers = romp.generate_polymers(molecules)
-    
+
     # Check that we got the results we expect.
     expected = pd.DataFrame(
         {
@@ -158,14 +158,12 @@ def test_polyimides(example_data):
         min_dist=9
     )  # setting the distance to 9 for this test only.
     pi = polymerize.Polyimide(npartitions=npartitions, bb_constraint=bb_constraint)
-    
+
     # Extract molecules from `example_data` and generate polymers from them.
     molecules = example_data["df"].iloc[range(30, 39), :]
     polymers = pi.generate_polymers(molecules)
-    polymers.index = list(
-        range(len(polymers))
-    )  # reset the index for convenience.
-    
+    polymers.index = list(range(len(polymers)))  # reset the index for convenience.
+
     # Check that we got the expected results.
     expected = pd.DataFrame(
         {
