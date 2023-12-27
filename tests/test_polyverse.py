@@ -120,6 +120,12 @@ def example_data():
             "ZINC38",
             canonical_smiles("NCCC(N)F"),
         ),  # long diamine with unequal charges on each amine
+        # The SMILES below denotes a 3-membered cyclic olefin with a carboxyl. The
+        # ROMP class should not make a polymer out of this molecule.
+        (
+            "ZINC39",
+            canonical_smiles("C1=CC1C(=O)O"),
+        ),
     ]
     index = list(range(len(id_sm)))
     df = pd.DataFrame(
