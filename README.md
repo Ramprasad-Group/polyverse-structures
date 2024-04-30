@@ -12,4 +12,4 @@ Examples of how to use the codebase are provided in the file named `tests/test_p
 ## Testing
 There are two tests in this repo. One is to test the `ROMP` class, the other to test the `Polyimide` class. To execute the tests, run `poetry run pytest`.
 ## Data
-`romp_polymers.json` contains the ROMP polymers designed in the companion paper.
+`data/romp_polymers.json` contains the ROMP polymers designed in the companion paper. `data/polyimides.json` contains the polyimides designed in the companion paper.
