@@ -15,13 +15,4 @@ made by performing Ring-opening metathesis polymerization (ROMP) on the molecule
 molecule in Key A.
 
 ## CSV files
-To view these files as CSV files rather than JSON files, you can execute the following code:
-```
-import pandas as pd
-
-# Load the JSON file
-df = pd.read_json('polyimides.json')
-
-# Write the data to a CSV file
-df.to_csv('polyimides.csv', index=False)
-```
+The corresponding CSV files are: (1) `polyimides.csv` and (2) `romp_polymers.csv`.
