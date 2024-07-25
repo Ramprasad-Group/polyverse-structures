@@ -1,5 +1,5 @@
 # polyverse
-This repo contains the code used to generate the polymers studied in the companion paper. At a high level, the code uses known molecules and know reaction rules (for ROMP and imide polycondensation) to generate plausible polymer repeat units.
+This repo contains the code used to generate the polymers studied in the companion paper, [AI-assisted discovery of high-temperature dielectrics for energy storage](https://www.nature.com/articles/s41467-024-50413-x). At a high level, the code uses known molecules and know reaction rules (for ROMP and imide polycondensation) to generate plausible polymer repeat units.
 ## Installation
 1. Install [poetry](https://python-poetry.org/) on your machine.
 2. If Python3.9 is installed on your machine skip to step 3, if not you will need to install it.
