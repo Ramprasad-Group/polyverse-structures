@@ -20,7 +20,7 @@ rdkit-pypi = ">=2021.9.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.4.2"
-black = "^23.9.1"
+black = "^24.3.0"
 ipython = "^8.15.0"
 
 [build-system]
