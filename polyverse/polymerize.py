@@ -179,9 +179,9 @@ class Polyimide(Polymerize):
         super().__init__(
             name="polyimide",
             reaction_class="condensation",
-            rxn_smarts="[C:1](=[O:2])[O:3][C:4](=[O:5]).[NH2:6][Ch:7]>>[C:1](=[O:2])[N:6]([Ch:7])[C:4](=[O:5])",
+            rxn_smarts="[C:1](=[O:2])[O:3][C:4](=[O:5]).[NH2:6][#6:7]>>[C:1](=[O:2])[N:6]([#6:7])[C:4](=[O:5])",
             polymerization1_smarts="[C:1](=[O:2])[O:3][C:4](=[O:5])>>[C:1](=[O:2])[N:6]([C:4](=[O:5]))[#0]",
-            polymerization2_smarts="[NH2:1][Ch:2]>>[Ch:2][#0]",
+            polymerization2_smarts="[NH2:1][#6:2]>>[#6:2][#0]",
             substruct_1_exception=None,
             substruct_2_exception=None,
             npartitions=npartitions,
